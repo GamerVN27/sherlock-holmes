@@ -50,6 +50,23 @@
         }
     </script>
     <style>
+        .video-frame {
+            width: 640px;           /* chỉnh kích thước */
+            max-width: 100%;
+            margin: 40px auto;
+            padding: 10px;
+            border: 4px solid #333;
+            border-radius: 12px;
+            background: #000;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .video-frame video {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+        }
         body {
             cursor: none; /* Hide default cursor */
         }
@@ -309,6 +326,13 @@
             </div>
         </div>
     </section>
+
+    <div class="video-frame">
+        <video controls>
+            <source src="video.mp4" type="video/mp4">
+            Trình duyệt của bạn không hỗ trợ video.
+        </video>
+    </div>
 
     <!-- Featured Cases -->
     <section id="cases" class="py-24 relative overflow-hidden">
