@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sherlock Holmes - Thế Giới Trinh Thám</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'holmes-dark': '#1a1a1a',
+                        'holmes-gold': '#c5a059',
+                        'holmes-paper': '#f4e4bc',
+                        'holmes-gray': '#2d2d2d',
+                        'holmes-accent': '#8B0000',
+                    },
+                    fontFamily: {
+                        'heading': ['"Playfair Display"', 'serif'],
+                        'title': ['"Cinzel"', 'serif'],
+                        'body': ['"Lato"', 'sans-serif'],
+                    },
+                    animation: {
+                        'fog-flow': 'fogFlow 20s linear infinite',
+                        'typewriter': 'typing 1s steps(40, end)',
+                        'blink': 'blink-caret .75s step-end infinite'
+                    },
+                    keyframes: {
+                        fogFlow: {
+                            '0%': { backgroundPosition: '0 0' },
+                            '100%': { backgroundPosition: '100% 0' },
+                        },
+                        typing: {
+                            from: { opacity: 0 },
+                            to: { opacity: 1 }
+                        },
+                        'blink-caret': {
+                            'from, to': { borderColor: 'transparent' },
+                            '50%': { borderColor: '#c5a059' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            cursor: none; /* Hide default cursor */
+        }
+
+        /* Custom Cursor */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #c5a059;
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #c5a059;
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        body:hover .cursor-outline.hovered {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(197, 160, 89, 0.1);
+            border-color: #fff;
+            backdrop-filter: invert(10%);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #c5a059; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a38243; }
+
+        /* Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 1s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 1s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal-left.active, .reveal-right.active { opacity: 1; transform: translateX(0); }
+
+        /* Fog Animation Background */
+        .fog-animated {
+            background-image: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png');
+            background-size: cover;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.4;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Button Hover Effect */
+        .btn-hover-slide {
+            position: relative;
+            overflow: hidden;
+            transition: color 0.4s;
+            z-index: 1;
+        }
+        .btn-hover-slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: -1;
+        }
+        .btn-hover-slide:hover::before {
+            transform: translateX(100%);
+        }
+        .btn-hover-slide:hover {
+            color: #1a1a1a !important;
+        }
+
+        /* 3D Tilt Card */
+        .tilt-card {
+            transition: transform 0.1s;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        .tilt-content {
+            transform: translateZ(20px);
+        }
+
+        /* Nav Link Underline */
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: #c5a059;
+            transition: width 0.3s;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Modal Animation */
+        .modal-enter { animation: modalFadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.8) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-holmes-dark text-gray-300 font-body overflow-x-hidden selection:bg-holmes-gold selection:text-holmes-dark">
+
+    <!-- Custom Cursor Elements -->
+    <div class="cursor-dot hidden md:block"></div>
+    <div class="cursor-outline hidden md:block"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-holmes-dark/90 backdrop-blur-md border-b border-holmes-gray transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-title text-holmes-gold font-bold tracking-wider hover-target">
+                <i class="fas fa-search mr-2"></i>SHERLOCK
+            </a>
+            <div class="hidden md:flex space-x-8">
+                <a href="#about" class="nav-link hover:text-holmes-gold transition duration-300 hover-target">Giới thiệu</a>
+                <a href="#characters" class="nav-link hover:text-holmes-gold transition duration-300 hover-target">Nhân vật</a>
+                <a href="#cases" class="nav-link hover:text-holmes-gold transition duration-300 hover-target">Vụ án</a>
+                <a href="#reviews" class="nav-link hover:text-holmes-gold transition duration-300 hover-target">Bình luận</a>
+                <a href="#facts" class="nav-link hover:text-holmes-gold transition duration-300 hover-target">Fun Facts</a>
+            </div>
+            <button class="md:hidden text-holmes-gold text-2xl hover-target">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        <div class="fog-animated animate-fog-flow"></div>
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-holmes-gray/20 to-transparent"></div>
+        
+        <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
+            <div class="reveal-left pl-4">
+                <h2 class="text-holmes-gold uppercase tracking-[0.2em] mb-4 text-sm font-bold">Sir Arthur Conan Doyle</h2>
+                <h1 class="text-5xl md:text-7xl font-heading text-white leading-tight mb-6">
+                    Bậc Thầy Của <br>
+                    <span class="italic text-holmes-gold">Sự Suy Luận</span>
+                </h1>
+                
+                <!-- Typewriter Effect Wrapper -->
+                <div class="mb-8 max-w-lg h-24">
+                    <p class="text-lg md:text-xl text-gray-400 leading-relaxed border-r-2 border-holmes-gold pr-2 animate-typewriter overflow-hidden whitespace-nowrap md:whitespace-normal">
+                        "Khi bạn đã loại bỏ những điều không thể..."
+                    </p>
+                    <p class="text-gray-500 text-sm mt-2 italic opacity-0 transition-opacity duration-1000 delay-1000" id="quote-finish">
+                        ...thì điều còn lại, dù khó tin đến đâu, vẫn phải là sự thật.
+                    </p>
+                </div>
+
+                <div class="flex gap-4">
+                    <a href="#cases" class="btn-hover-slide px-8 py-3 bg-holmes-gold text-holmes-dark font-bold border border-holmes-gold transition duration-300 rounded-sm hover-target shadow-[0_0_15px_rgba(197,160,89,0.3)]">
+                        Khám phá vụ án
+                    </a>
+                    <a href="#facts" class="px-8 py-3 border border-holmes-gold text-holmes-gold hover:bg-holmes-gold hover:text-holmes-dark transition duration-300 rounded-sm hover-target">
+                        Điều thú vị
+                    </a>
+                </div>
+            </div>
+            <div class="reveal-right relative group perspective-1000 flex justify-center">
+                <!-- Frame Decoration -->
+                <div class="absolute w-3/4 h-full border-2 border-holmes-gold transform translate-x-4 translate-y-4 opacity-30 transition duration-500"></div>
+                <!-- Main Image with Tilt effect via JS -->
+                <div id="hero-image" class="tilt-card relative overflow-hidden rounded shadow-2xl shadow-black/50 aspect-[3/4] md:w-3/4 cursor-pointer hover-target">
+                    <img src="https://cdn-media.sforum.vn/storage/app/media/ctv_seo10/truyen-trinh-tham-hay-4.jpg" 
+                         alt="Sherlock Holmes Book Cover" 
+                         class="w-full h-full object-cover filter sepia-[20%]">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
+                    <!-- Shine Effect -->
+                    <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 hover:opacity-100 transition duration-500 pointer-events-none"></div>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-holmes-gold">
+            <i class="fas fa-chevron-down text-2xl"></i>
+        </div>
+    </header>
+
+    <!-- Author & Intro Section -->
+    <section id="about" class="py-24 bg-holmes-gray relative">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto text-center reveal">
+                <span class="text-holmes-gold text-4xl mb-4 block animate-pulse"><i class="fas fa-feather-alt"></i></span>
+                <h2 class="text-4xl font-heading text-white mb-8">Huyền Thoại Số 221B Phố Baker</h2>
+                <p class="text-xl text-gray-400 leading-8 mb-12">
+                    Sherlock Holmes là một nhân vật thám tử hư cấu vào cuối thế kỷ 19 và đầu thế kỷ 20, xuất hiện lần đầu trong tác phẩm "Cuộc điều tra màu đỏ" năm 1887. Ông nổi tiếng với khả năng quan sát chi tiết, suy diễn logic tuyệt vời.
+                </p>
+                <div class="h-px w-24 bg-holmes-gold mx-auto"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Characters Cards (3D Tilt) -->
+    <section id="characters" class="py-24 bg-holmes-dark">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-heading text-white mb-16 text-center reveal">Nhân Vật Chính</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Holmes -->
+                <div class="tilt-card bg-[#252525] p-8 border-t-4 border-holmes-gold reveal shadow-lg hover:shadow-holmes-gold/20 hover-target">
+                    <div class="tilt-content">
+                        <div class="text-holmes-gold text-5xl mb-6 opacity-80"><i class="fas fa-user-secret"></i></div>
+                        <h3 class="text-2xl font-title text-white mb-4">Sherlock Holmes</h3>
+                        <p class="text-gray-400">Vị thám tử tư vấn lập dị nhưng thiên tài. Ông sử dụng khoa học suy luận và quan sát để phá án.</p>
+                    </div>
+                </div>
+                <!-- Watson -->
+                <div class="tilt-card bg-[#252525] p-8 border-t-4 border-gray-500 reveal shadow-lg hover:shadow-gray-500/20 hover-target">
+                    <div class="tilt-content">
+                        <div class="text-gray-400 text-5xl mb-6 opacity-80"><i class="fas fa-user-md"></i></div>
+                        <h3 class="text-2xl font-title text-white mb-4">Dr. John Watson</h3>
+                        <p class="text-gray-400">Bác sĩ quân y, người bạn thân thiết và là người viết sử cho các cuộc phiêu lưu của Holmes.</p>
+                    </div>
+                </div>
+                <!-- Moriarty -->
+                <div class="tilt-card bg-[#252525] p-8 border-t-4 border-red-900 reveal shadow-lg hover:shadow-red-900/20 hover-target">
+                    <div class="tilt-content">
+                        <div class="text-red-900 text-5xl mb-6 opacity-80"><i class="fas fa-spider"></i></div>
+                        <h3 class="text-2xl font-title text-white mb-4">Professor Moriarty</h3>
+                        <p class="text-gray-400">"Napoleon của tội phạm". Kẻ thù không đội trời chung và có trí tuệ ngang ngửa Holmes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Cases -->
+    <section id="cases" class="py-24 relative overflow-hidden">
+        <!-- Parallax Background -->
+        <div class="absolute inset-0 bg-fixed bg-center bg-cover" style="background-image: url('https://images.unsplash.com/photo-1505664194779-8beaceb93744?q=80&w=2070&auto=format&fit=crop'); filter: brightness(0.3);"></div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <h2 class="text-4xl font-heading text-holmes-gold mb-16 text-center reveal">Các Tác Phẩm Kinh Điển</h2>
+
+            <!-- Case 1 -->
+            <div class="flex flex-col md:flex-row items-center gap-12 mb-24 reveal group">
+                <div class="w-full md:w-1/2 overflow-hidden rounded-lg shadow-2xl border border-holmes-gray relative">
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition z-10"></div>
+                    <img src="https://i.ytimg.com/vi/Na1vgyed8F0/maxresdefault.jpg" alt="The Hound of the Baskervilles" class="w-full h-80 object-cover transform group-hover:scale-110 transition duration-1000 hover-target">
+                </div>
+                <div class="w-full md:w-1/2">
+                    <h3 class="text-3xl font-heading text-white mb-4">Con Chó Săn Của Dòng Họ Baskerville</h3>
+                    <p class="text-gray-300 mb-6 italic">The Hound of the Baskervilles (1902)</p>
+                    <p class="text-gray-400 leading-relaxed mb-6">
+                        Một lời nguyền cổ xưa, một con quái thú khổng lồ trên vùng đầm lầy sương mù, và một cái chết bí ẩn.
+                    </p>
+                    <button onclick="openModal('hound')" class="btn-hover-slide px-6 py-2 border border-holmes-gold text-holmes-gold uppercase text-sm tracking-widest font-bold hover-target">
+                        Đọc hồ sơ <i class="fas fa-file-alt ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Case 2 -->
+            <div class="flex flex-col md:flex-row-reverse items-center gap-12 reveal group">
+                <div class="w-full md:w-1/2 overflow-hidden rounded-lg shadow-2xl border border-holmes-gray">
+                    <img src="https://i.ytimg.com/vi/ai5RXkk1z5s/maxresdefault.jpg" alt="A Study in Scarlet" class="w-full h-80 object-cover transform group-hover:scale-110 transition duration-1000 hover-target">
+                </div>
+                <div class="w-full md:w-1/2 text-right md:text-left">
+                    <div class="md:text-right">
+                        <h3 class="text-3xl font-heading text-white mb-4">Chiếc Nhẫn Tình Cờ</h3>
+                        <p class="text-gray-300 mb-6 italic">A Study in Scarlet (1887)</p>
+                        <p class="text-gray-400 leading-relaxed mb-6">
+                            Cuộc gặp gỡ định mệnh giữa Holmes và Watson. Một xác chết không thương tích trong ngôi nhà hoang.
+                        </p>
+                        <button onclick="openModal('scarlet')" class="btn-hover-slide px-6 py-2 border border-holmes-gold text-holmes-gold uppercase text-sm tracking-widest font-bold hover-target">
+                            Đọc hồ sơ <i class="fas fa-file-alt ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section (Hover Card Effect) -->
+    <section id="reviews" class="py-24 bg-holmes-paper text-holmes-dark">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <i class="fas fa-comments text-3xl text-holmes-accent mb-4"></i>
+                <h2 class="text-4xl font-heading font-bold mb-4">Lời Bình Phẩm</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="tilt-card reveal-left bg-white/60 p-8 rounded shadow-lg border-l-4 border-holmes-gold hover:bg-white transition duration-300 hover-target">
+                    <div class="tilt-content">
+                        <i class="fas fa-quote-left text-2xl text-holmes-gold mb-4"></i>
+                        <p class="text-lg italic mb-6 leading-relaxed">
+                            "Sherlock Holmes là nhân vật hư cấu vĩ đại nhất mọi thời đại. Không có nhân vật nào trong văn học có sức sống mãnh liệt đến thế."
+                        </p>
+                        <div class="font-bold uppercase tracking-wider text-sm">— Stephen Fry</div>
+                    </div>
+                </div>
+
+                <div class="tilt-card reveal-right bg-white/60 p-8 rounded shadow-lg border-l-4 border-holmes-gold hover:bg-white transition duration-300 hover-target">
+                    <div class="tilt-content">
+                        <i class="fas fa-quote-left text-2xl text-holmes-gold mb-4"></i>
+                        <p class="text-lg italic mb-6 leading-relaxed">
+                            "Conan Doyle không chỉ viết truyện trinh thám, ông đã tạo ra một phương pháp tư duy khoa học mới thông qua nhân vật của mình."
+                        </p>
+                        <div class="font-bold uppercase tracking-wider text-sm">— The Guardian</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fun Facts Section -->
+    <section id="facts" class="py-24 bg-[#151515] relative overflow-hidden">
+        <div class="fog-animated animate-fog-flow" style="animation-duration: 30s;"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <h2 class="text-4xl font-heading text-white mb-16 text-center reveal">
+                <span class="text-holmes-gold">Sự Thật</span> Ít Người Biết
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Fact 1 -->
+                <div class="reveal tilt-card bg-holmes-gray p-6 rounded border border-gray-700 hover:border-holmes-gold transition duration-300 hover-target">
+                    <div class="tilt-content">
+                        <div class="text-holmes-gold text-3xl mb-4"><i class="fas fa-hat-cowboy-side"></i></div>
+                        <h3 class="text-xl font-bold text-white mb-3">Chiếc mũ Deerstalker</h3>
+                        <p class="text-gray-400 text-sm">Trong nguyên tác, Holmes chưa bao giờ đội chiếc mũ săn hươu. Nó đến từ họa sĩ Sidney Paget.</p>
+                    </div>
+                </div>
+
+                <!-- Fact 2 -->
+                <div class="reveal tilt-card bg-holmes-gray p-6 rounded border border-gray-700 hover:border-holmes-gold transition duration-300 hover-target">
+                    <div class="tilt-content">
+                        <div class="text-holmes-gold text-3xl mb-4"><i class="fas fa-comment-slash"></i></div>
+                        <h3 class="text-xl font-bold text-white mb-3">"Elementary..."</h3>
+                        <p class="text-gray-400 text-sm">Câu nói "Elementary, my dear Watson" chưa bao giờ xuất hiện nguyên văn trong bất kỳ cuốn sách nào.</p>
+                    </div>
+                </div>
+
+                <!-- Fact 3 -->
+                <div class="reveal tilt-card bg-holmes-gray p-6 rounded border border-gray-700 hover:border-holmes-gold transition duration-300 hover-target">
+                    <div class="tilt-content">
+                        <div class="text-holmes-gold text-3xl mb-4"><i class="fas fa-skull-crossbones"></i></div>
+                        <h3 class="text-xl font-bold text-white mb-3">Khai tử & Hồi sinh</h3>
+                        <p class="text-gray-400 text-sm">Doyle từng giết Holmes tại thác Reichenbach nhưng phải hồi sinh ông 10 năm sau do áp lực dư luận.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black py-12 border-t border-holmes-gray">
+        <div class="container mx-auto px-6 text-center">
+            <div class="text-2xl font-title text-holmes-gold font-bold tracking-wider mb-6 hover-target">SHERLOCK</div>
+            <p>&copy; SherlockHolme - Arthur Conan Doyle | Web được thực hiện bởi Trần Phạm Hùng Anh 12A2 THCS-THPT Minh Hoà 2025</p>
+            <p>Email:<strong> hunganhtranpham7@gmail.com </strong> </p>
+        </div>
+    </footer>
+
+    <!-- MODAL POPUP (Updated Style) -->
+    <div id="summaryModal" class="fixed inset-0 z-[10000] hidden items-center justify-center">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="relative bg-holmes-dark border-2 border-holmes-gold w-full max-w-2xl mx-4 p-8 rounded shadow-[0_0_50px_rgba(197,160,89,0.2)] modal-enter max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white text-2xl hover-target">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 id="modalTitle" class="text-3xl font-heading text-holmes-gold mb-6 border-b border-gray-700 pb-4">Tiêu đề</h3>
+            <div class="text-gray-300 space-y-4 leading-relaxed font-body" id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Data for summaries (Same as before)
+        const summaries = {
+            hound: {
+                title: "Con Chó Săn Của Dòng Họ Baskerville",
+                content: `<p><strong>Bối cảnh:</strong> Vùng đầm lầy Devonshire hoang vu...</p><p><strong>Cốt truyện:</strong> Sir Charles Baskerville chết bí ẩn...</p><p><strong>Kết thúc:</strong> Holmes vạch trần Stapleton và con chó ma quỷ.</p>`
+            },
+            scarlet: {
+                title: "Chiếc Nhẫn Tình Cờ",
+                content: `<p><strong>Bối cảnh:</strong> London năm 1881...</p><p><strong>Hiện trường:</strong> Xác chết không vết thương và dòng chữ "RACHE"...</p>`
+            }
+        };
+
+        // --- Custom Cursor Logic ---
+        const cursorDot = document.querySelector(".cursor-dot");
+        const cursorOutline = document.querySelector(".cursor-outline");
+        const hoverTargets = document.querySelectorAll(".hover-target, a, button");
+
+        window.addEventListener("mousemove", (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            // Dot follows instantly
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // Outline follows with slight delay (animation in CSS transition)
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 0, fill: "forwards" });
+        });
+
+        // Add hover effect to interactive elements
+        hoverTargets.forEach(el => {
+            el.addEventListener("mouseenter", () => cursorOutline.classList.add("hovered"));
+            el.addEventListener("mouseleave", () => cursorOutline.classList.remove("hovered"));
+        });
+
+        // --- 3D Tilt Effect Logic ---
+        const tiltCards = document.querySelectorAll('.tilt-card');
+
+        tiltCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = ((y - centerY) / centerY) * -10; // Max tilt 10deg
+                const rotateY = ((x - centerX) / centerX) * 10;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+            });
+        });
+
+        // --- Typewriter Finish Reveal ---
+        setTimeout(() => {
+            const el = document.getElementById('quote-finish');
+            if(el) el.style.opacity = '1';
+        }, 3500); // Matches typing animation duration
+
+        // --- Modal Logic ---
+        function openModal(caseId) {
+            const modal = document.getElementById('summaryModal');
+            const titleEl = document.getElementById('modalTitle');
+            const contentEl = document.getElementById('modalContent');
+            
+            const data = summaries[caseId];
+            if(data) {
+                titleEl.textContent = data.title;
+                contentEl.innerHTML = data.content;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('summaryModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        // Close on Esc key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === "Escape") closeModal();
+        });
+
+        // --- Scroll Animation (IntersectionObserver) ---
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+        
+        // --- Navbar Scroll Effect ---
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2', 'shadow-md');
+                nav.classList.remove('py-4');
+            } else {
+                nav.classList.add('py-4');
+                nav.classList.remove('py-2', 'shadow-md');
+            }
+        });
+    </script>
+</body>
+</html>
