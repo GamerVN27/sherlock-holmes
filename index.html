@@ -50,6 +50,29 @@
         }
     </script>
     <style>
+        /* Khung bao quanh trình phát nhạc */
+.audio-container {
+    background-color: #f1f3f4;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: fit-content;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+/* Tùy chỉnh tiêu đề bài hát */
+.audio-container p {
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Style cơ bản cho thẻ audio */
+audio {
+    filter: sepia(20%) saturate(70%) grayscale(100%) contrast(99%) invert(12%); /* Một mẹo nhỏ để đổi màu trình phát mặc định */
+    outline: none;
+}
         .video-frame {
             width: 960px;           /* chỉnh kích thước */
             max-width: 100%;
@@ -327,12 +350,21 @@
         </div>
     </section>
 
+    <div class="audio-container">
+    <p>Đang phát: Giới Thiệu Sherlock-Holmes</p>
+    <audio controls>
+        <source src="audio.mp3" type="audio/mpeg">
+        Trình duyệt của bạn không hỗ trợ thẻ audio.
+    </audio>
+</div>
     <div class="video-frame">
         <video controls>
             <source src="video.mp4" type="video/mp4">
             Trình duyệt của bạn không hỗ trợ video.
         </video>
     </div>
+
+    
 
     <!-- Featured Cases -->
     <section id="cases" class="py-24 relative overflow-hidden">
