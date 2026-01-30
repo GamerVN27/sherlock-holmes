@@ -52,25 +52,45 @@
     <style>
         /* Khung bao quanh trình phát nhạc */
 .audio-container {
-    background-color: #f1f3f4;
+    background-color: #1f2937; /* Xám đen đậm */
     padding: 20px;
     border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    width: fit-content;
+    
+    /* Căn giữa bản thân nó */
+    margin: 0 auto; 
+    
+    /* Viền và đổ bóng */
+    border: 2px solid #374151; 
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    
+    width: 100%;
+    max-width: 320px;
     text-align: center;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Tùy chỉnh tiêu đề bài hát */
-.audio-container p {
-    margin-bottom: 10px;
-    color: #333;
-    font-weight: bold;
+.audio-container {
+    background-color: #1f2937;
+    padding: 20px;
+    border-radius: 15px;
+    
+    /* CHỈNH SỬA TẠI ĐÂY */
+    display: block;        /* Đảm bảo trình duyệt hiểu đây là khối */
+    margin: 40px auto;    /* 40px cách trên dưới, 'auto' để căn giữa trái phải */
+    
+    border: 2px solid #374151; 
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    width: 90%;            /* Co giãn tốt trên điện thoại */
+    max-width: 320px;
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Style cơ bản cho thẻ audio */
+/* Style cho trình phát nhạc để hợp với nền tối */
 audio {
-    filter: sepia(20%) saturate(70%) grayscale(100%) contrast(99%) invert(12%); /* Một mẹo nhỏ để đổi màu trình phát mặc định */
+    width: 100%;
+    height: 35px;
+    filter: invert(100%) hue-rotate(180deg) brightness(1.2); /* Đảo màu để hiện rõ trên nền đen */
     outline: none;
 }
         .video-frame {
